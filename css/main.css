@@ -1,0 +1,741 @@
+/* ============================================================
+   VIBES 254 — MAIN STYLESHEET
+   DRACO DYNASTY · Nairobi, Kenya
+   Fully responsive — phones, tablets, laptops, all orientations
+   No scrolling. Everything fits the viewport.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --bg:        #000000;
+  --bg-panel:  #0a0a0a;
+  --bg-card:   #111111;
+  --neon:      #00FF66;
+  --neon-dim:  rgba(0,255,102,0.15);
+  --neon-glow: 0 0 20px rgba(0,255,102,0.6), 0 0 60px rgba(0,255,102,0.2);
+  --red:       #FF3333;
+  --red-dim:   rgba(255,51,51,0.15);
+  --red-glow:  0 0 20px rgba(255,51,51,0.6), 0 0 60px rgba(255,51,51,0.2);
+  --gold:      #C9A84C;
+  --white:     #FFFFFF;
+  --grey:      #888888;
+  --grey-dark: #222222;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+
+  /* Responsive spacing scale — shrinks on small screens */
+  --gap-sm:  clamp(4px,  1vh, 10px);
+  --gap-md:  clamp(6px,  1.5vh, 16px);
+  --gap-lg:  clamp(10px, 2.5vh, 28px);
+  --pad-h:   clamp(12px, 3vw, 48px);
+  --pad-v:   clamp(8px,  2vh, 32px);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Screen Base ── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  overflow: hidden; /* never scroll */
+}
+.screen.active { opacity:1; pointer-events:all; }
+
+/* ============================================================
+   ORIENTATION GUARD
+   ============================================================ */
+#orientation-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-md);
+}
+#orientation-guard.visible { display:flex; }
+
+.rotate-icon {
+  font-size: clamp(3rem, 15vw, 8rem);
+  animation: rotate-pulse 1.5s ease-in-out infinite;
+}
+@keyframes rotate-pulse {
+  0%,100% { transform: rotate(0deg) scale(1); }
+  50%      { transform: rotate(90deg) scale(1.1); }
+}
+.rotate-label {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6vw, 4rem);
+  letter-spacing: 0.1em;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+}
+.rotate-sub {
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 2.5vw, 1.1rem);
+  color: var(--grey);
+}
+
+/* ============================================================
+   SETUP SCREEN
+   Fits all in one screen — logo, config, teams, button
+   ============================================================ */
+#setup-screen {
+  background: var(--bg);
+  padding: var(--pad-v) var(--pad-h);
+  gap: var(--gap-md);
+  justify-content: center;
+}
+
+.setup-header { text-align: center; }
+
+.setup-logo {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 5.5rem);
+  letter-spacing: 0.15em;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  line-height: 1;
+}
+.setup-tagline {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.2vw, 0.85rem);
+  color: var(--grey);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Config row — all three blocks side by side */
+.config-grid {
+  display: flex;
+  gap: clamp(6px, 1.5vw, 20px);
+  width: 100%;
+  max-width: min(92vw, 960px);
+  justify-content: center;
+}
+.config-block {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: clamp(6px,1.5vh,14px) clamp(8px,1.5vw,16px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px,1vh,10px);
+}
+.config-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1vw, 0.75rem);
+  color: var(--neon);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.config-options { display:flex; gap: clamp(4px,0.6vw,10px); }
+.config-btn {
+  flex: 1;
+  background: var(--bg-panel);
+  border: 1px solid var(--grey-dark);
+  border-radius: 6px;
+  color: var(--grey);
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2vw, 1.8rem);
+  padding: clamp(4px,0.8vh,10px) 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.05em;
+}
+.config-btn:hover  { border-color:var(--neon); color:var(--neon); }
+.config-btn.selected {
+  background: var(--neon-dim);
+  border-color: var(--neon);
+  color: var(--neon);
+  box-shadow: var(--neon-glow);
+}
+
+.deck-select {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--grey-dark);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+  padding: clamp(4px,0.8vh,10px) clamp(6px,0.8vw,12px);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.deck-select:focus { border-color: var(--neon); }
+
+/* Teams row */
+.teams-row {
+  display: flex;
+  gap: clamp(6px,1.5vw,20px);
+  width: 100%;
+  max-width: min(92vw, 960px);
+  justify-content: center;
+}
+.team-card {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: clamp(6px,1.2vh,12px) clamp(8px,1.5vw,16px);
+  display: flex;
+  align-items: center;
+  gap: clamp(8px,1.5vw,16px);
+}
+.team-num {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 3.5rem);
+  color: var(--neon);
+  line-height: 1;
+  opacity: 0.3;
+  flex-shrink: 0;
+}
+.team-input-wrap { flex:1; display:flex; flex-direction:column; gap:2px; }
+.team-input-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.4rem, 0.9vw, 0.6rem);
+  color: var(--grey);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.team-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--grey-dark);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  letter-spacing: 0.05em;
+  outline: none;
+  width: 100%;
+  padding: 2px 0;
+  transition: border-color 0.15s ease;
+}
+.team-name-input:focus         { border-bottom-color: var(--neon); }
+.team-name-input::placeholder  { color: var(--grey-dark); }
+
+/* Start button */
+.start-btn {
+  background: var(--neon);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  letter-spacing: 0.2em;
+  padding: clamp(8px,1.5vh,18px) clamp(24px,6vw,64px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.start-btn::after { content:''; position:absolute; inset:0; background:white; opacity:0; transition:opacity 0.1s; }
+.start-btn:active::after { opacity:0.15; }
+.start-btn:hover  { box-shadow:var(--neon-glow); transform:scale(1.02); }
+
+/* ============================================================
+   PERMISSION / CALIBRATION SCREEN
+   ============================================================ */
+#permission-screen {
+  background: var(--bg);
+  gap: var(--gap-md);
+  text-align: center;
+  padding: var(--pad-v) var(--pad-h);
+}
+#perm-step-request,
+#perm-step-calibrate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+}
+.perm-step-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.2vw, 0.8rem);
+  color: var(--neon);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+.perm-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 5rem);
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+.perm-desc {
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.5vw, 1.1rem);
+  color: var(--grey);
+  max-width: min(50vw, 500px);
+  line-height: 1.5;
+}
+.perm-icon {
+  font-size: clamp(2rem, 8vw, 5rem);
+  animation: phone-tilt 2s ease-in-out infinite;
+}
+@keyframes phone-tilt {
+  0%,100% { transform: rotate(-10deg); }
+  50%      { transform: rotate(10deg); }
+}
+.perm-btn {
+  background: transparent;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  color: var(--neon);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  letter-spacing: 0.2em;
+  padding: clamp(8px,1.5vh,16px) clamp(20px,5vw,48px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.perm-btn:hover { background:var(--neon-dim); box-shadow:var(--neon-glow); }
+
+/* Calibration ring */
+.calib-ring {
+  width:  clamp(70px, 14vw, 130px);
+  height: clamp(70px, 14vw, 130px);
+  border-radius: 50%;
+  border: 3px solid var(--grey-dark);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.calib-ring svg {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  transform: rotate(-90deg);
+}
+.calib-ring circle {
+  fill: none;
+  stroke: var(--neon);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(0,255,102,0.8));
+  transition: stroke-dashoffset 1s linear;
+}
+.calib-count {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  z-index: 1;
+}
+
+/* ============================================================
+   PLAY SCREEN — HUD + Card Stage
+   ============================================================ */
+#play-screen {
+  background: var(--bg);
+  flex-direction: column;
+  padding: 0;
+  justify-content: flex-start;
+}
+
+/* HUD bar */
+.hud-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(6px,1.2vh,14px) clamp(12px,2.5vw,32px);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--grey-dark);
+  flex-shrink: 0;
+}
+.hud-timer {
+  font-family: var(--font-mono);
+  font-size: clamp(1.3rem, 3.5vw, 3rem);
+  font-weight: 700;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  letter-spacing: 0.05em;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.hud-timer.urgent {
+  color: var(--red);
+  text-shadow: var(--red-glow);
+  animation: timer-pulse 0.5s ease-in-out infinite;
+}
+@keyframes timer-pulse {
+  0%,100% { opacity:1; }
+  50%      { opacity:0.6; }
+}
+.hud-team {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2vw, 1.8rem);
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-align: center;
+  line-height: 1.2;
+}
+.hud-team span { color: var(--neon); }
+.hud-counter {
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 1.5vw, 1.2rem);
+  color: var(--grey);
+  text-align: right;
+}
+.hud-counter strong {
+  color: var(--white);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+}
+
+/* Card stage */
+.card-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 3vw, 48px);
+  padding: clamp(8px,1.5vh,20px) clamp(12px,3vw,40px);
+  position: relative;
+  min-height: 0; /* allows flex child to shrink */
+}
+.card-image-wrap {
+  flex-shrink: 0;
+  width: clamp(80px, 22vw, 240px);
+  aspect-ratio: 4/3;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid var(--grey-dark);
+  background: var(--bg-card);
+}
+.card-image-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card-image-fallback {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  color: var(--neon);
+  background: var(--bg-card);
+}
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1vh, 12px);
+  min-width: 0;
+}
+.card-category {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.1vw, 0.8rem);
+  color: var(--neon);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.card-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6.5vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  word-break: break-word;
+}
+.card-deck-label {
+  font-family: var(--font-body);
+  font-size: clamp(0.55rem, 1.1vw, 0.85rem);
+  color: var(--grey);
+}
+
+/* Tilt zones */
+.tilt-zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 10vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.tilt-zone.left  { left:0;  background: linear-gradient(to right, rgba(255,51,51,0.3), transparent); }
+.tilt-zone.right { right:0; background: linear-gradient(to left,  rgba(0,255,102,0.3), transparent); }
+.tilt-zone.active { opacity:1; }
+.tilt-arrow { font-size: clamp(1.5rem, 4vw, 3.5rem); }
+
+/* Feedback flash */
+.feedback-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+.feedback-flash.correct { background: rgba(0,255,102,0.12); }
+.feedback-flash.pass    { background: rgba(255,51,51,0.12);  }
+.feedback-flash.show    { opacity:1; }
+.feedback-word {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 9rem);
+  letter-spacing: 0.1em;
+  animation: flash-in 0.3s ease-out;
+}
+.feedback-flash.correct .feedback-word { color:var(--neon); text-shadow:var(--neon-glow); }
+.feedback-flash.pass    .feedback-word { color:var(--red);  text-shadow:var(--red-glow);  }
+@keyframes flash-in {
+  from { transform:scale(1.4); opacity:0; }
+  to   { transform:scale(1);   opacity:1; }
+}
+
+/* ============================================================
+   SCOREBOARD SCREEN
+   ============================================================ */
+#score-screen {
+  background: var(--bg);
+  gap: var(--gap-md);
+  padding: var(--pad-v) var(--pad-h);
+}
+.score-header { text-align:center; }
+.score-round-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.1vw, 0.8rem);
+  color: var(--neon);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+.score-team-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+.score-points-big {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  line-height: 1;
+}
+.score-points-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.1vw, 0.8rem);
+  color: var(--grey);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.card-results {
+  display: flex;
+  gap: clamp(4px, 1vw, 12px);
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: min(90vw, 900px);
+  max-height: 28vh;
+  overflow-y: auto;
+}
+.result-pill {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.6vw, 8px);
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: clamp(4px,0.6vh,8px) clamp(8px,1.2vw,16px);
+  border: 1px solid var(--grey-dark);
+}
+.result-pill.correct { border-color:var(--neon); background:var(--neon-dim); }
+.result-pill.passed  { border-color:var(--red);  background:var(--red-dim);  }
+.result-icon  { font-size: clamp(0.7rem, 1.5vw, 1.1rem); }
+.result-name  {
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+  font-weight: 600;
+  color: var(--white);
+}
+.cumulative-row {
+  display: flex;
+  gap: clamp(8px, 2vw, 24px);
+  justify-content: center;
+}
+.cum-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: clamp(8px,1.2vh,16px) clamp(16px,3vw,32px);
+  min-width: clamp(100px, 18vw, 200px);
+}
+.cum-team {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1vw, 0.75rem);
+  color: var(--grey);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.cum-score {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+  color: var(--white);
+  line-height: 1;
+}
+.cum-block.leading .cum-score { color:var(--neon); text-shadow:var(--neon-glow); }
+
+.pass-turn-btn {
+  background: transparent;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  color: var(--neon);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  letter-spacing: 0.2em;
+  padding: clamp(8px,1.2vh,14px) clamp(20px,5vw,48px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.pass-turn-btn:hover { background:var(--neon-dim); box-shadow:var(--neon-glow); }
+.pass-turn-btn.end-game { border-color:var(--gold); color:var(--gold); }
+.pass-turn-btn.end-game:hover { background:rgba(201,168,76,0.15); box-shadow:0 0 20px rgba(201,168,76,0.5); }
+
+/* Game Over (rendered inside score-screen) */
+.winner-crown {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  animation: crown-bounce 1s ease-in-out infinite;
+}
+@keyframes crown-bounce {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  50%      { transform: translateY(-8px) rotate(5deg); }
+}
+.winner-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.2vw, 0.8rem);
+  color: var(--grey);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+.winner-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 7rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+.winner-wins {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3.5vw, 3rem);
+  color: var(--white);
+  letter-spacing: 0.1em;
+}
+.final-scores { display:flex; gap:clamp(8px,2vw,24px); justify-content:center; }
+.play-again-btn {
+  background: var(--neon);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  letter-spacing: 0.2em;
+  padding: clamp(8px,1.2vh,14px) clamp(20px,5vw,48px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.play-again-btn:hover { box-shadow:var(--neon-glow); transform:scale(1.02); }
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.hidden { display:none !important; }
+::-webkit-scrollbar       { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--grey-dark); border-radius:2px; }
+
+/* ============================================================
+   BREAKPOINTS
+   Tablet portrait / laptop adjustments
+   ============================================================ */
+
+/* Tablet portrait (768px+) — two column setup layout */
+@media (min-width: 768px) and (orientation: portrait) {
+  .config-grid  { max-width: 680px; }
+  .teams-row    { max-width: 680px; }
+  .setup-logo   { font-size: clamp(3rem, 8vw, 5rem); }
+}
+
+/* Laptop / desktop (1024px+) — more breathing room */
+@media (min-width: 1024px) {
+  :root {
+    --gap-md: 20px;
+    --gap-lg: 32px;
+  }
+  .setup-logo  { font-size: clamp(3.5rem, 5vw, 6rem); }
+  .config-grid { max-width: 900px; }
+  .teams-row   { max-width: 900px; }
+  .card-name   { font-size: clamp(3rem, 5.5vw, 6rem); }
+}
+
+/* Very small landscape phones (height < 400px) — compress aggressively */
+@media (max-height: 400px) and (orientation: landscape) {
+  .setup-logo      { font-size: clamp(1.5rem, 5vw, 3rem); }
+  .setup-tagline   { display: none; }
+  #setup-screen    { gap: 4px; padding: 6px 12px; }
+  .config-block    { padding: 4px 8px; gap: 3px; }
+  .team-card       { padding: 4px 8px; }
+  .start-btn       { padding: 6px 24px; font-size: clamp(1rem, 2.5vw, 1.8rem); }
+  .hud-bar         { padding: 4px 12px; }
+  .card-stage      { padding: 6px 12px; gap: 12px; }
+  .card-name       { font-size: clamp(1.8rem, 6vw, 4rem); }
+  #score-screen    { gap: 4px; padding: 6px 12px; }
+  .score-team-name { font-size: clamp(1.5rem, 4vw, 3rem); }
+  .score-points-big{ font-size: clamp(2rem, 6vw, 4rem); }
+  .card-results    { max-height: 20vh; }
+  #permission-screen { gap: 6px; padding: 8px 16px; }
+  .perm-title      { font-size: clamp(1.5rem, 4vw, 3rem); }
+  .perm-icon       { font-size: clamp(1.5rem, 5vw, 3rem); }
+  .calib-ring      { width: clamp(50px,10vw,80px); height: clamp(50px,10vw,80px); }
+}
