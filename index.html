@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Vibes 254 — The Kenyan heads-up party game. Hold it. Tilt it. Name it." />
+  <meta property="og:title" content="Vibes 254" />
+  <meta property="og:description" content="The Kenyan heads-up party game. Hold it. Tilt it. Name it." />
+  <title>Vibes 254 — DRACO DYNASTY</title>
+  <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+
+<div id="orientation-guard">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-label">ROTATE YOUR PHONE</div>
+  <div class="rotate-sub">Vibes 254 is landscape only</div>
+</div>
+
+<div id="app">
+  <div class="screen active" id="setup-screen"></div>
+
+  <div class="screen" id="permission-screen">
+    <div id="perm-step-request">
+      <div class="perm-step-label">Step 1 of 2</div>
+      <div class="perm-icon">🤳</div>
+      <div class="perm-title">ALLOW MOTION ACCESS</div>
+      <div class="perm-desc">
+        Vibes 254 uses your phone's gyroscope to detect tilts.<br>
+        Tap below and allow access when prompted.
+      </div>
+      <button class="perm-btn" id="grant-perm-btn">ALLOW GYROSCOPE</button>
+    </div>
+
+    <div id="perm-step-calibrate" style="display:none; flex-direction:column; align-items:center; gap:3vh; text-align:center;">
+      <div class="perm-step-label">Step 2 of 2 — Calibration</div>
+      <div class="perm-title" style="font-size:clamp(2rem,5vw,4.5rem);">HOLD IT TO YOUR FOREHEAD</div>
+      <div class="perm-desc">
+        Hold the phone against your forehead — flat.<br>
+        When the countdown hits zero, you're calibrated and ready.
+      </div>
+      <div class="calib-ring" id="calib-ring">
+        <svg viewBox="0 0 100 100">
+          <circle id="calib-circle" cx="50" cy="50" r="44"
+            stroke-dasharray="276.46" stroke-dashoffset="0" />
+        </svg>
+        <div class="calib-count" id="calib-count">3</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:clamp(0.5rem,1.2vw,0.8rem);color:var(--grey);letter-spacing:0.2em;">
+        STAY STILL — CAPTURING NEUTRAL ANGLE
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="play-screen"></div>
+  <div class="screen" id="score-screen"></div>
+</div>
+
+<script type="module">
+  import { GyroSensor }        from './js/engine/GyroSensor.js';
+  import { AssetLoader }       from './js/engine/AssetLoader.js';
+  import { MatchStateMachine } from './js/engine/MatchStateMachine.js';
+  import { SetupScreen }       from './js/components/SetupScreen.js';
+  import { CardDisplay }       from './js/components/CardDisplay.js';
+  import { ScoreBoard }        from './js/components/ScoreBoard.js';
+
+  // Orientation guard
+  const orientGuard = document.getElementById('orientation-guard');
+  function checkOrientation() {
+    orientGuard.classList.toggle('visible', window.innerHeight > window.innerWidth);
+  }
+  window.addEventListener('resize', checkOrientation);
+  window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 200));
+  checkOrientation();
+
+  // Screen switcher
+  const screens = {
+    setup:      document.getElementById('setup-screen'),
+    permission: document.getElementById('permission-screen'),
+    play:       document.getElementById('play-screen'),
+    score:      document.getElementById('score-screen'),
+  };
+  function showScreen(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    if (screens[name]) screens[name].classList.add('active');
+  }
+
+  const gyro   = new GyroSensor();
+  const loader = new AssetLoader('./mock-decks.json');
+  let setupScreen, cardDisplay, scoreBoard, match, gameConfig;
+
+  async function boot() {
+    const ok = await loader.init();
+    if (!ok) { alert('Vibes 254: Failed to load card data.'); return; }
+
+    const decks = loader.getDecks();
+
+    setupScreen = new SetupScreen(screens.setup, decks);
+    setupScreen.onStart = (config) => onSetupStart(config);
+    setupScreen.render();
+
+    cardDisplay = new CardDisplay(screens.play);
+    cardDisplay.render();
+
+    scoreBoard = new ScoreBoard(screens.score);
+    scoreBoard.render();
+    scoreBoard.onPlayAgain = () => restartGame();
+
+    showScreen('setup');
+  }
+
+  async function onSetupStart(config) {
+    gameConfig = config;
+    showScreen('permission');
+    gyro.start();
+
+    document.getElementById('grant-perm-btn').addEventListener('click', async () => {
+      const result = await gyro.requestPermission();
+      if (!result.granted) {
+        alert('Gyroscope access denied.\n\niOS: Settings → Safari → Motion & Orientation Access → ON\nThen reload.');
+        return;
+      }
+      document.getElementById('perm-step-request').style.display   = 'none';
+      document.getElementById('perm-step-calibrate').style.display = 'flex';
+      startCalibrationCountdown(() => startGame());
+    });
+  }
+
+  function startCalibrationCountdown(onComplete) {
+    const countEl = document.getElementById('calib-count');
+    const circle  = document.getElementById('calib-circle');
+    let count = 3;
+    countEl.textContent = count;
+    circle.style.strokeDashoffset = 0;
+
+    const interval = setInterval(() => {
+      count--;
+      countEl.textContent = count;
+      circle.style.strokeDashoffset = 276.46 * ((3 - count) / 3);
+      if (count <= 0) {
+        clearInterval(interval);
+        gyro.calibrate();
+        countEl.textContent = '✓';
+        setTimeout(onComplete, 600);
+      }
+    }, 1000);
+  }
+
+  function startGame() {
+    const shuffled = loader.getShuffledCards(gameConfig.deckId, gameConfig.maxGuesses * 10);
+
+    match = new MatchStateMachine({
+      timeCap:    gameConfig.timeCap,
+      maxGuesses: gameConfig.maxGuesses,
+      cards:      shuffled,
+      teams:      gameConfig.teams,
+    });
+
+    match.onStateChange = (state, data) => {
+      if (state === 'play') {
+        showScreen('play');
+      } else if (state === 'score') {
+        showScreen('score');
+        gyro.stop();
+        scoreBoard.showRoundResult(data);
+        scoreBoard.onContinue = () => {
+          showScreen('permission');
+          document.getElementById('perm-step-request').style.display   = 'none';
+          document.getElementById('perm-step-calibrate').style.display = 'flex';
+          document.getElementById('calib-count').textContent = '3';
+          document.getElementById('calib-circle').style.strokeDashoffset = '0';
+          gyro.start();
+          startCalibrationCountdown(() => match.nextTurn());
+        };
+      } else if (state === 'gameover') {
+        showScreen('score');
+        gyro.stop();
+        scoreBoard.showGameOver(data);
+      }
+    };
+
+    match.onTick       = (t)          => cardDisplay.setTime(t);
+    match.onCardChange = (card, n, t) => {
+      cardDisplay.setTeam(match.getActiveTeam().name, match.activeTeam);
+      cardDisplay.setCard(card, n, t);
+    };
+
+    gyro.onCorrect = () => { cardDisplay.flashCorrect(); match.handleCorrect(); };
+    gyro.onPass    = () => { cardDisplay.flashPass();    match.handlePass();    };
+    gyro.onAngle   = (delta) => cardDisplay.updateTiltIndicator(delta);
+
+    gyro.start();
+    match.startRound();
+  }
+
+  function restartGame() {
+    gyro.stop();
+    match = null;
+    document.getElementById('perm-step-request').style.display   = 'flex';
+    document.getElementById('perm-step-calibrate').style.display = 'none';
+    scoreBoard.render();
+    scoreBoard.onPlayAgain = () => restartGame();
+    showScreen('setup');
+  }
+
+  boot();
+</script>
+</body>
+</html>
