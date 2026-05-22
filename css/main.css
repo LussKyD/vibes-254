@@ -1,0 +1,855 @@
+/* ============================================================
+   VIBES 254 — MAIN STYLESHEET
+   DRACO DYNASTY · Nairobi, Kenya
+   AMOLED True Black + Neon Green party game aesthetic
+   All sizing in vw/vh/flex for landscape lock
+   ============================================================ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --bg:           #000000;
+  --bg-panel:     #0a0a0a;
+  --bg-card:      #111111;
+  --neon:         #00FF66;
+  --neon-dim:     rgba(0, 255, 102, 0.15);
+  --neon-glow:    0 0 20px rgba(0, 255, 102, 0.6), 0 0 60px rgba(0, 255, 102, 0.2);
+  --red:          #FF3333;
+  --red-dim:      rgba(255, 51, 51, 0.15);
+  --red-glow:     0 0 20px rgba(255, 51, 51, 0.6), 0 0 60px rgba(255, 51, 51, 0.2);
+  --gold:         #C9A84C;
+  --white:        #FFFFFF;
+  --grey:         #888888;
+  --grey-dark:    #222222;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* ── App Root ── */
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Screen Base ── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ============================================================
+   ORIENTATION GUARD
+   ============================================================ */
+#orientation-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vh;
+}
+
+#orientation-guard.visible {
+  display: flex;
+}
+
+.rotate-icon {
+  font-size: 15vw;
+  animation: rotate-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate-pulse {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50%       { transform: rotate(90deg) scale(1.1); }
+}
+
+.rotate-label {
+  font-family: var(--font-display);
+  font-size: 6vw;
+  letter-spacing: 0.1em;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+}
+
+.rotate-sub {
+  font-family: var(--font-body);
+  font-size: 2.5vw;
+  color: var(--grey);
+}
+
+/* ============================================================
+   SETUP SCREEN
+   ============================================================ */
+#setup-screen {
+  background: var(--bg);
+  padding: 4vh 6vw;
+  gap: 3vh;
+}
+
+.setup-header {
+  text-align: center;
+  margin-bottom: 1vh;
+}
+
+.setup-logo {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  letter-spacing: 0.15em;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  line-height: 1;
+}
+
+.setup-tagline {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.5vw, 1rem);
+  color: var(--grey);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 0.5vh;
+}
+
+/* Config Grid */
+.config-grid {
+  display: flex;
+  gap: 2vw;
+  width: 100%;
+  max-width: 90vw;
+  justify-content: center;
+}
+
+.config-block {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: 2vh 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  max-width: 28vw;
+}
+
+.config-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.2vw, 0.8rem);
+  color: var(--neon);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.config-options {
+  display: flex;
+  gap: 0.8vw;
+}
+
+.config-btn {
+  flex: 1;
+  background: var(--bg-panel);
+  border: 1px solid var(--grey-dark);
+  border-radius: 6px;
+  color: var(--grey);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  padding: 1vh 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.05em;
+}
+
+.config-btn:hover {
+  border-color: var(--neon);
+  color: var(--neon);
+}
+
+.config-btn.selected {
+  background: var(--neon-dim);
+  border-color: var(--neon);
+  color: var(--neon);
+  box-shadow: var(--neon-glow);
+}
+
+/* Deck Select */
+.deck-select {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--grey-dark);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.5vw, 1rem);
+  padding: 1.2vh 1vw;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.deck-select:focus {
+  border-color: var(--neon);
+}
+
+/* Teams Row */
+.teams-row {
+  display: flex;
+  gap: 2vw;
+  width: 100%;
+  max-width: 90vw;
+  justify-content: center;
+}
+
+.team-card {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: 1.5vh 2vw;
+  display: flex;
+  align-items: center;
+  gap: 1.5vw;
+  max-width: 44vw;
+}
+
+.team-num {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--neon);
+  line-height: 1;
+  opacity: 0.3;
+}
+
+.team-input-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vh;
+}
+
+.team-input-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.4rem, 1vw, 0.65rem);
+  color: var(--grey);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.team-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--grey-dark);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  letter-spacing: 0.05em;
+  outline: none;
+  width: 100%;
+  padding: 0.3vh 0;
+  transition: border-color 0.15s ease;
+}
+
+.team-name-input:focus {
+  border-bottom-color: var(--neon);
+}
+
+.team-name-input::placeholder {
+  color: var(--grey-dark);
+}
+
+/* Start Button */
+.start-btn {
+  background: var(--neon);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  letter-spacing: 0.2em;
+  padding: 1.8vh 8vw;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.start-btn:active::after { opacity: 0.15; }
+
+.start-btn:hover {
+  box-shadow: var(--neon-glow);
+  transform: scale(1.02);
+}
+
+/* ============================================================
+   PERMISSION / CALIBRATION SCREEN
+   ============================================================ */
+#permission-screen {
+  background: var(--bg);
+  gap: 4vh;
+  text-align: center;
+  padding: 4vh 8vw;
+}
+
+.perm-step-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.5vw, 0.85rem);
+  color: var(--neon);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.perm-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.perm-desc {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 2vw, 1.3rem);
+  color: var(--grey);
+  max-width: 50vw;
+  line-height: 1.5;
+}
+
+.perm-icon {
+  font-size: clamp(3rem, 10vw, 7rem);
+  animation: phone-tilt 2s ease-in-out infinite;
+}
+
+@keyframes phone-tilt {
+  0%, 100% { transform: rotate(-10deg); }
+  50%       { transform: rotate(10deg); }
+}
+
+.perm-btn {
+  background: transparent;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  color: var(--neon);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  letter-spacing: 0.2em;
+  padding: 1.5vh 6vw;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.perm-btn:hover {
+  background: var(--neon-dim);
+  box-shadow: var(--neon-glow);
+}
+
+/* Calibration Countdown */
+.calib-ring {
+  width: clamp(80px, 18vw, 140px);
+  height: clamp(80px, 18vw, 140px);
+  border-radius: 50%;
+  border: 3px solid var(--grey-dark);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calib-ring svg {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  transform: rotate(-90deg);
+}
+
+.calib-ring circle {
+  fill: none;
+  stroke: var(--neon);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(0,255,102,0.8));
+  transition: stroke-dashoffset 1s linear;
+}
+
+.calib-count {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  z-index: 1;
+}
+
+/* ============================================================
+   CARD DISPLAY — GAMEPLAY SCREEN
+   ============================================================ */
+#play-screen {
+  background: var(--bg);
+  flex-direction: column;
+  padding: 0;
+}
+
+/* HUD Bar (top) */
+.hud-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5vh 3vw;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--grey-dark);
+  flex-shrink: 0;
+}
+
+.hud-timer {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  letter-spacing: 0.05em;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.hud-timer.urgent {
+  color: var(--red);
+  text-shadow: var(--red-glow);
+  animation: timer-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.hud-team {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.hud-team span {
+  color: var(--neon);
+}
+
+.hud-counter {
+  font-family: var(--font-mono);
+  font-size: clamp(0.8rem, 2vw, 1.5rem);
+  color: var(--grey);
+  text-align: right;
+}
+
+.hud-counter strong {
+  color: var(--white);
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+}
+
+/* Card Stage */
+.card-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4vw;
+  padding: 2vh 4vw;
+  position: relative;
+}
+
+.card-image-wrap {
+  flex-shrink: 0;
+  width: clamp(120px, 30vw, 280px);
+  aspect-ratio: 4/3;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid var(--grey-dark);
+  background: var(--bg-card);
+  position: relative;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-image-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: var(--neon);
+  background: var(--bg-card);
+}
+
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+}
+
+.card-category {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.3vw, 0.9rem);
+  color: var(--neon);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: var(--white);
+}
+
+.card-deck-label {
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1.3vw, 0.9rem);
+  color: var(--grey);
+}
+
+/* Tilt Indicators */
+.tilt-indicators {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.tilt-zone {
+  width: 12vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+  border-radius: 0;
+}
+
+.tilt-zone.left  {
+  background: linear-gradient(to right, rgba(255,51,51,0.3), transparent);
+  border-radius: 0;
+}
+
+.tilt-zone.right {
+  background: linear-gradient(to left, rgba(0,255,102,0.3), transparent);
+  border-radius: 0;
+}
+
+.tilt-zone.active { opacity: 1; }
+
+.tilt-arrow {
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+/* Feedback Flash */
+.feedback-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+
+.feedback-flash.correct {
+  background: rgba(0, 255, 102, 0.12);
+}
+
+.feedback-flash.pass {
+  background: rgba(255, 51, 51, 0.12);
+}
+
+.feedback-flash.show { opacity: 1; }
+
+.feedback-word {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 10rem);
+  letter-spacing: 0.1em;
+  animation: flash-in 0.3s ease-out;
+}
+
+.feedback-flash.correct .feedback-word { color: var(--neon); text-shadow: var(--neon-glow); }
+.feedback-flash.pass    .feedback-word { color: var(--red);  text-shadow: var(--red-glow);  }
+
+@keyframes flash-in {
+  from { transform: scale(1.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ============================================================
+   SCOREBOARD SCREEN
+   ============================================================ */
+#score-screen {
+  background: var(--bg);
+  gap: 3vh;
+  padding: 3vh 5vw;
+}
+
+.score-header {
+  text-align: center;
+}
+
+.score-round-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.3vw, 0.85rem);
+  color: var(--neon);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.score-team-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.score-points-big {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 10vw, 8rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  line-height: 1;
+}
+
+.score-points-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.3vw, 0.85rem);
+  color: var(--grey);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Card Result List */
+.card-results {
+  display: flex;
+  gap: 1.5vw;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 90vw;
+  max-height: 35vh;
+  overflow-y: auto;
+}
+
+.result-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: 0.8vh 1.5vw;
+  border: 1px solid var(--grey-dark);
+  transition: border-color 0.2s;
+}
+
+.result-pill.correct { border-color: var(--neon); background: var(--neon-dim); }
+.result-pill.passed  { border-color: var(--red);  background: var(--red-dim);  }
+
+.result-icon {
+  font-size: clamp(0.8rem, 2vw, 1.3rem);
+}
+
+.result-name {
+  font-family: var(--font-body);
+  font-size: clamp(0.65rem, 1.5vw, 1rem);
+  font-weight: 600;
+  color: var(--white);
+}
+
+/* Cumulative Scores */
+.cumulative-row {
+  display: flex;
+  gap: 3vw;
+  justify-content: center;
+}
+
+.cum-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5vh;
+  background: var(--bg-card);
+  border: 1px solid var(--grey-dark);
+  border-radius: 8px;
+  padding: 1.5vh 3vw;
+  min-width: 18vw;
+}
+
+.cum-team {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.2vw, 0.8rem);
+  color: var(--grey);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.cum-score {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--white);
+  line-height: 1;
+}
+
+.cum-block.leading .cum-score { color: var(--neon); text-shadow: var(--neon-glow); }
+
+/* Pass Button */
+.pass-turn-btn {
+  background: transparent;
+  border: 2px solid var(--neon);
+  border-radius: 8px;
+  color: var(--neon);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  letter-spacing: 0.2em;
+  padding: 1.5vh 6vw;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pass-turn-btn:hover {
+  background: var(--neon-dim);
+  box-shadow: var(--neon-glow);
+}
+
+.pass-turn-btn.end-game {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.pass-turn-btn.end-game:hover {
+  background: rgba(201,168,76,0.15);
+  box-shadow: 0 0 20px rgba(201,168,76,0.5);
+}
+
+/* ============================================================
+   GAME OVER SCREEN
+   ============================================================ */
+#gameover-screen {
+  background: var(--bg);
+  gap: 3vh;
+  text-align: center;
+}
+
+.winner-crown {
+  font-size: clamp(3rem, 8vw, 6rem);
+  animation: crown-bounce 1s ease-in-out infinite;
+}
+
+@keyframes crown-bounce {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50%       { transform: translateY(-10px) rotate(5deg); }
+}
+
+.winner-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+  color: var(--grey);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.winner-name {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 8rem);
+  color: var(--neon);
+  text-shadow: var(--neon-glow);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.winner-wins {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 3.5rem);
+  color: var(--white);
+  letter-spacing: 0.1em;
+}
+
+.final-scores {
+  display: flex;
+  gap: 3vw;
+  justify-content: center;
+}
+
+.play-again-btn {
+  background: var(--neon);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  letter-spacing: 0.2em;
+  padding: 1.5vh 6vw;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.play-again-btn:hover {
+  box-shadow: var(--neon-glow);
+  transform: scale(1.02);
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.hidden { display: none !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--grey-dark); border-radius: 2px; }
